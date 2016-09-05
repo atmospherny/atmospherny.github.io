@@ -74,6 +74,18 @@ def update():
 		with open("feed.html","w") as outf2:
 			outf2.write(inf.encode('utf-8'))
 	arr2 = ""
+	print "Updating In-the-sky.org..."
+	txt = urllib2.urlopen("https://in-the-sky.org//rss.php?feed=dfan&latitude=55.7522&longitude=37.6156&timezone=Europe/Moscow")
+	xml = ET.fromstring(txt.read())[0]
+	for child in xml:
+		if child.tag=="item":
+			arr2 += "<div><details><summary class='inner'><a href='%s' target='_blank'>%s</a></summary><p>%s</p></details></div>"%(child[1].text,child[0].text,child[2].text)			
+	with open("feed.html","r") as rf2:
+		inf = unicode(rf2.read(),errors="ignore")
+		inf = inf.replace("__INTHESKY__",arr2)
+		with open("feed.html","w") as outf2:
+			outf2.write(inf.encode('utf-8'))
+	arr2 = ""
 	print "Updating n+1..."
 	txt = urllib2.urlopen("https://nplus1.ru/rss")
 	xml = ET.fromstring(txt.read())[0]
