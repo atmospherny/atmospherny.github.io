@@ -11,80 +11,245 @@
 }
 
 body {
-	background-color: #330066;
-	color: #eee;
-}
-
-a {
-	color: #FFFF99;
-}
-
-a:visited {
-	color: #aaa;
-}
-
-body * {
-	font-family: 'PT Serif';
-}
-
-p {
 	margin: 0;
 }
 
-summary {
-	cursor: pointer;
+#container {
+	width: 100%;
+	max-width: 720px;
+	margin: auto;
+	background-color: #ccc;
+}
+
+button {
+	width: 100%;
+	margin: 0;
+	border-style: none;
+	font-size: 48pt;
+	padding: 1em;
+	font-family: 'PT Serif';
 	outline: none;
-	font-size: 18pt;
-	margin-left: 0.5em;
+	-webkit-transition: background-color 2s;
+	-moz-transition: background-color 2s;
+	-o-transition: background-color 2s;
+	transition: background-color 2s;
 }
 
-summary.inner {
-	margin-left: 1em;
+button:hover {
+	background-color: #777;
+	-webkit-transition: background-color 0.2s;
+	-moz-transition: background-color 0.2s;
+	-o-transition: background-color 0.2s;
+	transition: background-color 0.2s;
 }
 
-details p {
-	margin-left: 3em;
-	font-size: 12pt;
+table {
+	width: 100%;
 }
 
-details div {
-	margin: 0.5em;
-}
-
-h1 {
-	margin-left: 1em;
-}
-
-.rubric {
+#current {
 	font-size: 24pt;
+	font-family: 'PT Serif';
+	padding: 0.3em;
 }
+
+summary {
+	background-color: #888;
+	padding: 0.3em;
+	outline: none;
+	cursor: pointer;
+}
+
+#progress {
+	text-align: center;
+}
+
+#weekday {
+	text-align: center;
+}
+
+a {
+	color: #333;
+}
+
+a:visited {
+	color: #888;
+}
+
 </style>
+
+<script type="text/javascript">
+var currentIndex = 0;
+var myChoice = new Object();
+
+var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+function o(s) {
+	return document.getElementById(s);
+}
+
+function next() {
+	currentIndex++;
+	if (currentIndex == o("titles").innerHTML.split("<br><br><br>").length) currentIndex=0;
+	update();
+	updateIndex();
+}
+
+function prev() {
+	currentIndex--;
+	if (currentIndex < 0) currentIndex = o("titles").innerHTML.split("<br><br><br>").length - 1;
+	update();
+	updateIndex();
+}
+
+function choose() {
+	myChoice["a"+currentIndex] = "tr";
+	update()
+}
+
+function clubs() {
+	myChoice["a"+currentIndex] = "bl";
+	update()
+}
+
+function spades() {
+	myChoice["a"+currentIndex] = "br";
+	update()	
+}
+
+function unchoose() {
+	myChoice["a"+currentIndex] = "tl";
+	update()
+}
+
+function ifchosen() {
+	switch(myChoice["a"+currentIndex]) {
+		case "tr":
+			o("current-title").innerHTML = "&hearts; " + o("current-title").innerHTML
+			break;
+		case "br":
+			o("current-title").innerHTML = "&spades; " + o("current-title").innerHTML
+			break;
+		case "bl":
+			o("current-title").innerHTML = "&clubs; " + o("current-title").innerHTML
+			break;
+		default:
+			o("current-title").innerHTML = "&diams; " + o("current-title").innerHTML		
+	}
+}
+
+function update() {
+	o("current-title").innerHTML = o("titles").innerHTML.split("<br><br><br>")[currentIndex];
+	o("current-abstract").innerHTML = o("abstracts").innerHTML.split("<br><br><br>")[currentIndex] + "<br>" + "<a href='" + o("links").innerHTML.split("<br><br><br>")[currentIndex] + "' target='_blank'>download pdf</a>";
+	ifchosen();
+	updateStorage();
+	o("progress").innerHTML = "#" + (currentIndex + 1);
+}
+
+function updateStorage() {
+	localStorage["myChoice"] = JSON.stringify(myChoice)
+}
+
+function updateIndex() {
+	localStorage["currentIndex"] = currentIndex;
+}
+
+function updateChoice() {
+	myChoice = JSON.parse(localStorage["myChoice"]);
+	currentIndex = parseInt(localStorage["currentIndex"]);
+	if (typeof(currentIndex)!= "number") {
+		localStorage["currentIndex"] = 0;
+		currentIndex = 0;
+	} 
+}
+
+function listA() {
+	buf = ""
+	for(var i in myChoice) {
+		if ((myChoice[i] == "tr") || (myChoice[i] == "bl")) buf += "#" + (parseInt(i.split("a")[1]) + 1) + " "
+	}
+	window.prompt("Share your choice:", buf);
+}
+
+function listB() {
+	buf = ""
+	for(var i in myChoice) {
+		if ((myChoice[i] == "tr") || (myChoice[i] == "br")) buf += "#" + (parseInt(i.split("a")[1]) + 1) + " "
+	}
+	window.prompt("Share your choice:", buf);
+}
+
+function setWeekday() {
+	var d = new Date();
+	var n = d.getUTCHours();
+	if (o("weekday").innerHTML != days[now.getDay()]) {
+		if((days[now.getDay()] != "Saturday") && (days[now.getDay()] != "Sunday")) {
+			if(n>3) {
+				localStorage["myChoice"] = JSON.stringify({});
+				localStorage["currentIndex"] = 0;
+			}
+		}
+	}
+}
+
+</script>
 </head>
-<body>
-<h1>Atmospherny feed</h1>
+<body onload="updateChoice();update()">
+
+<div id="container">
+<div id="current">
+
+<div id="weekday">__WEEKDAY__</div>
+<div id="progress"></div>
+
+<p id="current-title">
+
+</p>
+
 <details>
-<summary class="rubric">Arxiv</summary>
-__ARXIV__
+<summary>abstract</summary>
+<p id="current-abstract">
+
+</p>
 </details>
-<details>
-<summary class="rubric">Nplus1</summary>
-__NPLUSONE__
-</details>
-<details>
-<summary class="rubric">Science</summary>
-__SCICUR__
-</details>
-<details>
-<summary class="rubric">NASA</summary>
-__NASABR__
-</details>
-<details>
-<summary class="rubric">ISS</summary>
-__ISSREP__
-</details>
-<details>
-<summary class="rubric">In-the-sky.org</summary>
-__INTHESKY__
-</details>
+
+</div>
+<table>
+<tr>
+<td><button onclick="prev()">
+<
+</button></td><td><button onclick="next()">
+>
+</button></td>
+</tr>
+<tr>
+<td><button onclick="unchoose()">
+&diams;
+</button></td><td><button onclick="choose()">
+&hearts;
+</button></td>
+</tr>
+<tr>
+<td><button onclick="clubs()">
+&clubs;
+</button></td><td><button onclick="spades()">
+&spades;
+</button></td>
+</tr>
+
+<tr><td><button onclick="listA()">(&clubs;&hearts;)</button></td><td><button onclick="listB()">(&spades;&hearts;)</button></td></tr>
+
+</table>
+
+</div>
+
+<div id="viewer">
+
+</div>
+
+<div style="visibility:hidden; display: none;" id="titles">__ARXIV_TITLES__</div>
+<div style="visibility:hidden; display: none;" id="abstracts">__ARXIV_ABSTRACTS__</div>
+<div style="visibility:hidden; display: none;" id="links">__ARXIV_LINKS__</div>
+
 </body>
 </html>
