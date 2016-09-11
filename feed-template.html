@@ -155,11 +155,18 @@ function updateIndex() {
 }
 
 function updateChoice() {
-	myChoice = JSON.parse(localStorage["myChoice"]);
-	currentIndex = parseInt(localStorage["currentIndex"]);
-	if (typeof(currentIndex)!= "number") {
+	try {
+		myChoice = JSON.parse(localStorage["myChoice"]);
+		currentIndex = parseInt(localStorage["currentIndex"]);
+		if (typeof(currentIndex)!= "number") {
+			localStorage["currentIndex"] = 0;
+			currentIndex = 0;
+		}
+	} catch(e) {
 		localStorage["currentIndex"] = 0;
+		localStorage["myChoice"] = JSON.stringify("{}");
 		currentIndex = 0;
+		myChoice = {};
 	} 
 }
 
