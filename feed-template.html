@@ -105,14 +105,14 @@ function o(s) {
 
 function next() {
 	currentIndex++;
-	if (currentIndex == o("titles").innerHTML.split("<br><br><br>").length) currentIndex=0;
+	if (currentIndex == o("titles").innerHTML.split("{{{{ARTICLE_PARSER}}}}").length) currentIndex=0;
 	update();
 	updateIndex();
 }
 
 function prev() {
 	currentIndex--;
-	if (currentIndex < 0) currentIndex = o("titles").innerHTML.split("<br><br><br>").length - 1;
+	if (currentIndex < 0) currentIndex = o("titles").innerHTML.split("{{{{ARTICLE_PARSER}}}}").length - 1;
 	update();
 	updateIndex();
 }
@@ -154,8 +154,8 @@ function ifchosen() {
 }
 
 function update() {
-	o("current-title").innerHTML = o("titles").innerHTML.split("<br><br><br>")[currentIndex];
-	o("current-abstract").innerHTML = o("abstracts").innerHTML.split("<br><br><br>")[currentIndex] + "<br>" + "<a href='" + o("links").innerHTML.split("<br><br><br>")[currentIndex] + "' target='_blank'>download pdf</a>";
+	o("current-title").innerHTML = o("titles").innerHTML.split("{{{{ARTICLE_PARSER}}}}")[currentIndex];
+	o("current-abstract").innerHTML = o("abstracts").innerHTML.split("{{{{ARTICLE_PARSER}}}}")[currentIndex] + "<br>" + "<a href='" + o("links").innerHTML.split("{{{{ARTICLE_PARSER}}}}")[currentIndex] + "' target='_blank'>download pdf</a>";
 	ifchosen();
 	updateStorage();
 	o("progress").innerHTML = "#" + (currentIndex + 1);

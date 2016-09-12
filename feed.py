@@ -26,9 +26,9 @@ def update():
 		it = 0
 		for child in xml:
 			if it>1:
-				arr += "%s<br><br><br>"%(child[0].text.split(" (arXiv:")[0].replace("\"","\\\""))			
-				arr2 += "%s<br><br><br>"%(child[2].text.replace("\"","\\\""))
-				arr3 += "%s<br><br><br>"%(child[1].text.replace("/abs/","/pdf/"))
+				arr += "%s{{{{ARTICLE_PARSER}}}}"%(child[0].text.split(" (arXiv:")[0].replace("\"","\\\""))			
+				arr2 += "%s{{{{ARTICLE_PARSER}}}}"%(child[2].text.replace("\"","\\\""))
+				arr3 += "%s{{{{ARTICLE_PARSER}}}}"%(child[1].text.replace("/abs/","/pdf/"))
 			it+=1		
 	with open("feed-template.html","r") as rf:
 		inf = rf.read()
